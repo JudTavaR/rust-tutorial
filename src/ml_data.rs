@@ -101,7 +101,7 @@ mod test{
 
     #[test]
     fn load_json_test(){
-        let path = Path::new("resources/1645511997141_M8INRNFV6O_curr.jso");
+        let path = Path::new("resources/1645511997141_M8INRNFV6O_curr.json");
         let data = read_ml_json(&path);
 
         println!("{}", data.element_statistics.nodes.len());
