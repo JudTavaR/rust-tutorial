@@ -121,17 +121,21 @@ mod topology {
             self.dilate_y(1.0 / d);
         }
 
-        pub fn has_point(&self, p1: &Point) -> bool {
-            todo!()
-        }
-
-        pub fn has_square(&self, sq: &Square) -> bool {
-            todo!()
-        }
-
         pub fn manhattan_distance(&self, sq: &Square) -> f64 {
-            todo!()
+            if (self.p_tl.x <= sq.p_tl.x && sq.p_tl.x <= self.p_br.x) || (sq.p_tl.x <= self.p_tl.x && self.p_tl.x <= sq.p_br.x) {
+                let d = f64::abs(sq.p_br.y - self.p_tl.y).min(f64::abs(self.p_br.y - sq.p_tl.y));
+                return d;
+            }else if (self.p_tl.y <= sq.p_tl.y && sq.p_tl.y <= self.p_br.y) || (sq.p_tl.y <= self.p_tl.y && self.p_tl.y <= sq.p_br.y) {
+                let d = f64::abs(sq.p_br.x - self.p_tl.x).min(f64::abs(self.p_br.x - sq.p_tl.x));
+                return d;
+            }else {
+                let dx = f64::abs(sq.p_br.x - self.p_tl.x).min(f64::abs(self.p_br.x - sq.p_tl.x));
+                let dy = f64::abs(sq.p_br.y - self.p_tl.y).min(f64::abs(self.p_br.y - sq.p_tl.y));
+                let d = dx + dy;
+                return d;
+            }
         }
+
     }
 }
 #[cfg(test)]
@@ -217,5 +221,12 @@ mod test {
         sq.erosion(0.5);
 
         assert_eq!(sq.area(), 9.0);
+    }
+
+    #[test]
+    fn manhattan_test() {
+        let s1: Square = Square::new(Point::new(0.0, 0.0), Point::new(3.0, 3.0));
+        let s2: Square = Square::new(Point::new(5.0, 0.0), Point::new(10.0, 10.0));
+        assert_eq!(s1.manhattan_distance(&s2),2.0);
     }
 }
