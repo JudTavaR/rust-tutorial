@@ -34,7 +34,7 @@ pub struct MLDataContainer {
     element_statistics: MLData,
 }
 
-fn read_ml_json(path: &Path) -> MLDataContainer{
+pub fn read_ml_json(path: &Path) -> MLDataContainer{
 
     let json_str = fs::read_to_string(path).unwrap();
 
@@ -78,7 +78,9 @@ struct Person {
 #[cfg(test)]
 mod test{
     use std::path::Path;
+    use std::slice::range;
     use crate::ml_data::{Person, read_ml_json};
+    use crate::Node;
 
     #[test]
     fn json_test(){
@@ -101,9 +103,57 @@ mod test{
 
     #[test]
     fn load_json_test(){
-        let path = Path::new("resources/1645511997141_M8INRNFV6O_curr.json");
+        let path = Path::new("resources/1663154348643_8ZGUJJLLWV/ml_data/1663154348643_8ZGUJJLLWV.json");
         let data = read_ml_json(&path);
+        let mut xx_node: Node = data.element_statistics.nodes[0].clone();
+        let mut correlacion = Vec::new();
 
-        println!("{}", data.element_statistics.nodes.len());
+        for node in data.element_statistics.nodes.iter() {
+            if node.a.contains_key("XX") {
+                xx_node = node.clone();
+                break;
+            }
+        }
+        println!("Nodo XX {}:  {:?}", xx_node.i, xx_node.a);
+
+        for node in data.element_statistics.nodes.iter() {
+            let mut suma = 0.0;
+            let mut num_nodos = 0.0;
+            for (k, v) in xx_node.a.iter() {
+                suma += node.a.iter()
+                            .filter(|(gk, gv)| *gk == k && *gv == v && *gk != "XX" && *gk != "HT" && *gk != "WH"
+                                && *gk != "LT" && *gk != "RT")
+                            .count() as f64;
+            }
+            num_nodos = node.a.iter()
+                            .filter(|(gk, gv)| *gk != "XX" && *gk != "HT" && *gk != "WH"
+                                && *gk != "LT" && *gk != "RT")
+                            .count() as f64;
+
+            correlacion.push(suma / num_nodos);
+        }
+        println!("Correlacion: {:?}", correlacion);
+        println!("Maximo: {}", correlacion.iter().cloned().fold(0./0., f64::max));
+
+        /*
+        let mut iter = data.element_statistics.nodes.iter();
+        //let cuantos = iter.len();
+        //println!("{}", cuantos);
+        let mut cual = "no".to_string();
+        for num in iter{
+            //println!("{}", num.i);
+            //println!("{}", num.a.len());
+            for key in num.a.keys(){
+                //println!("{}",key);
+                if key == "XX" && num.a[key] == "true"{
+                    cual = num.i;
+                    break
+                }
+            }
+        }
+        let my_int: i32 = cual.parse().unwrap();
+        println!("{}",my_int);
+        println!("{}", data.element_statistics.nodes[513].a["XX"]);
+         */
     }
 }
