@@ -133,7 +133,16 @@ mod test{
             correlacion.push(suma / num_nodos);
         }
         println!("Correlacion: {:?}", correlacion);
+
+
         println!("Maximo: {}", correlacion.iter().cloned().fold(0./0., f64::max));
+        let max_value = correlacion.iter().cloned().fold(0./0., f64::max);
+        let index = correlacion.iter().position(|&r| r == max_value).unwrap();
+        println!("Index Max Value {:?}", index);
+
+
+
+
 
         /*
         let mut iter = data.element_statistics.nodes.iter();
